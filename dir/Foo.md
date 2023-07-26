@@ -1,3 +1,3 @@
-To the [index](../index.md)
+To the [top](../top.md)
 
 To the [Sample](../Sample.md)
