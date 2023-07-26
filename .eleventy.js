@@ -5,13 +5,8 @@ const commonmark = require("markdown-it")("commonmark").use(
   {
     processHTML: true,
     replaceLink: function (link, env, token, htmlToken) {
-      const markdownExtension = ".MD";
-      // The irony that I am using Obsidian.md which uses md as its top level
-      // domain and the code below breaks links to md top level domains is not
-      // lost on me.
-      if (link.slice(-3).toUpperCase() === markdownExtension) {
-        return link.slice(0, -3);
-      }
+      // https://github.com/11ty/eleventy/discussions/1973#discussioncomment-1344106
+      return link.replace(/^([^/][^:]*)\.md(#[^#]+)?$/, "../$1/$2")
     },
   },
 );
