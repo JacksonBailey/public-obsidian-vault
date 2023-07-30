@@ -9,3 +9,4 @@
 
 # Obsidian insists on lf
 *.md text eol=lf
+*.markdown text eol=lf

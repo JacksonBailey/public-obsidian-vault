@@ -1,19 +1,54 @@
+---
+---
 This file's audience is myself or folks contributing. Probably just me.
 
-## Building
+This uses Jekyll. It uses the `actions/jekyll-build-pages` GitHub Action to
+build in production and the [jekyll-docker][1] project to build locally. There may
+be some differences between the two but hopefully they are minor enough to not
+be a problem.
 
-To install dependencies run `npm install`. There shouldn't be too many since
-this project is mostly for hosting textual information. Eleventy (11ty) is used
-to build the site. The documentation can be found [here][11ty-docs].
+## Current problems
 
-To build the site run `npm run build` *(not `npm build` which is deprecated and
-totally unrelated)*. The generated site will be be output to `_site`.
+- Serving locally is not working (even with the `--no-watch` flag).
+- The original `Gemfile.lock` created by the `jekyll new ...` command had gems
+  that were not part of the `jekyll/jekyll` image or at least versions that were
+  not. The gems are installed in `/usr/gem/gems/`. The documentation does not
+  mention using this as a volume to enable caching, only
+  `./vendor/bundle:/usr/local/bundle:Z`. The gems that are not in the base image
+  are not being installed in that location though, only some auto generated
+  files from Bundler. This leads to installing some (not all) dependencies each
+  time. There may be some easy fix I'm missing since I am a novice with Ruby.
+  I have specifically specified `4.2.2` in the docker compose file so it does
+  not cause this problem when a new version is released.
 
-To do that and also serve the site locally run `npm start`. To stop it use `^C`.
-You may need to do it twice. This will automatically update the site files as
-you modify things.
+## Commands
 
-To run a test use `npm test`. This does a dry run of the build without actually
-outputting any files.
+Many of the commands below list `jekyll` twice in a row. This is not a typo. The
+first is the entry in `docker-compose.yml`. Everything following that is the
+command to run in the container.
 
-[11ty-docs]: https://www.11ty.dev/docs/usage/
+To build the site:
+
+```
+docker compose run jekyll jekyll build
+```
+
+To serve the site locally:
+
+```
+docker compose run jekyll jekyll serve --no-watch
+```
+
+To update the `Gemfile.lock` if you want new versions or changed the `Gemfile`:
+
+```
+docker compose run jekyll bundle update
+```
+
+To troubleshoot the image by just dropping into a bash prompt:
+
+```
+docker compose run jekyll bash
+```
+
+[1]: https://github.com/envygeeks/jekyll-docker
