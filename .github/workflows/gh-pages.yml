@@ -1,4 +1,4 @@
-# See https://github.com/actions/starter-workflows/blob/main/pages/gatsby.yml
+# See https://github.com/actions/starter-workflows/blob/main/pages/jekyll-gh-pages.yml
 
 name: GitHub Pages
 

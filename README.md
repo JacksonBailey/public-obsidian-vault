@@ -1,54 +1,22 @@
----
----
 This file's audience is myself or folks contributing. Probably just me.
 
-This uses Jekyll. It uses the `actions/jekyll-build-pages` GitHub Action to
-build in production and the [jekyll-docker][1] project to build locally. There may
-be some differences between the two but hopefully they are minor enough to not
-be a problem.
+This project uses submodules. Use `git clone --recursive` to clone. To update
+to the latest version of the submodule use `git submodule update`.
 
-## Current problems
+- In PowerShell, `docker build --tag 'wowee2' .`
+- `docker run --rm -it -v .:/workdir wowee2 github-pages build`
+- `docker run --rm -it -v .:/workdir -p 4000:4000 wowee2 jekyll serve --skip-initial-build`
 
-- Serving locally is not working (even with the `--no-watch` flag).
-- The original `Gemfile.lock` created by the `jekyll new ...` command had gems
-  that were not part of the `jekyll/jekyll` image or at least versions that were
-  not. The gems are installed in `/usr/gem/gems/`. The documentation does not
-  mention using this as a volume to enable caching, only
-  `./vendor/bundle:/usr/local/bundle:Z`. The gems that are not in the base image
-  are not being installed in that location though, only some auto generated
-  files from Bundler. This leads to installing some (not all) dependencies each
-  time. There may be some easy fix I'm missing since I am a novice with Ruby.
-  I have specifically specified `4.2.2` in the docker compose file so it does
-  not cause this problem when a new version is released.
 
-## Commands
+- `docker run --rm -it -p 4000:4000 -v .\_site:/src/site gh-pages` Maybe???
 
-Many of the commands below list `jekyll` twice in a row. This is not a typo. The
-first is the entry in `docker-compose.yml`. Everything following that is the
-command to run in the container.
+Alright I'm done with this for the night. What's going on?
 
-To build the site:
+1. We are fiddling with the github pages dockerfile from the action [here][1].
+   This one is sort of working but I cannot navigate between generated pages
+   locally when opening the files in Firefox. I'm unsure if something is wrong
+   or it's just a quirk of the local file generation.
+2. We are fiddling with the pages-gem dockerfile but having less luck, [here][2].
 
-```
-docker compose run jekyll jekyll build
-```
-
-To serve the site locally:
-
-```
-docker compose run jekyll jekyll serve --no-watch
-```
-
-To update the `Gemfile.lock` if you want new versions or changed the `Gemfile`:
-
-```
-docker compose run jekyll bundle update
-```
-
-To troubleshoot the image by just dropping into a bash prompt:
-
-```
-docker compose run jekyll bash
-```
-
-[1]: https://github.com/envygeeks/jekyll-docker
+[1]: https://github.com/actions/jekyll-build-pages/blob/main/Dockerfile
+[2]: https://github.com/github/pages-gem/blob/master/Dockerfile
